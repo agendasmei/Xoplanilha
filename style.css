@@ -1,4 +1,4 @@
-let fixa = localStorage.getItem("fixa") || 0;
+let fixa = Number(localStorage.getItem("fixa")) || 0;
 let variavel = JSON.parse(localStorage.getItem("var")) || [];
 let despesas = JSON.parse(localStorage.getItem("desp")) || [];
 
@@ -21,6 +21,8 @@ function salvarFixa() {
 
 function addVar() {
   let v = Number(document.getElementById("var").value);
+  if (!v) return;
+
   variavel.push(v);
   salvar();
   atualizar();
@@ -31,6 +33,8 @@ function addDespesa() {
   let valor = Number(document.getElementById("valor").value);
   let caixa = document.getElementById("caixa").value;
 
+  if (!nome || !valor) return;
+
   despesas.push({ nome, valor, caixa });
   salvar();
   atualizar();
@@ -38,14 +42,14 @@ function addDespesa() {
 
 function atualizar() {
   let totalVar = variavel.reduce((a,b)=>a+b,0);
-  let entradas = Number(fixa) + totalVar;
+  let entradas = fixa + totalVar;
 
   let totalDesp = despesas.reduce((a,b)=>a+b.valor,0);
   let saldo = entradas - totalDesp;
 
-  document.getElementById("saldo").innerText = "R$ " + saldo;
+  document.getElementById("saldo").innerText = "R$ " + saldo.toFixed(2);
   document.getElementById("resumo").innerText =
-    "Entradas: R$ " + entradas + " | Gastos: R$ " + totalDesp;
+    "Entradas: R$ " + entradas.toFixed(2) + " | Gastos: R$ " + totalDesp.toFixed(2);
 
   document.getElementById("lista").innerHTML =
     despesas.map(d =>
@@ -59,10 +63,10 @@ function atualizar() {
 
   document.getElementById("caixinhasView").innerHTML =
     Object.entries(caixinhas).map(([k,v]) => {
-      let pct = (v / entradas * 100 || 0).toFixed(0);
+      let pct = entradas ? (v / entradas * 100) : 0;
       return `
         <div>
-          ${k} - ${pct}%
+          ${k} - ${pct.toFixed(0)}%
           <div class="progress">
             <div class="bar" style="width:${pct}%"></div>
           </div>
@@ -70,12 +74,11 @@ function atualizar() {
       `;
     }).join("");
 
-  // ⚠️ ALERTA INTELIGENTE (tipo IA)
+  // ALERTA INTELIGENTE
   let essencial = caixinhas["Essencial"] || 0;
-  let pctEssencial = (essencial / entradas * 100 || 0);
+  let pctEssencial = entradas ? (essencial / entradas * 100) : 0;
 
   let alerta = "";
-
   if (pctEssencial > 50) {
     alerta = "⚠️ Você passou de 50% em essenciais!";
   }
