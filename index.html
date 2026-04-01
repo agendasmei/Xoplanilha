@@ -2,9 +2,10 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Finance AI</title>
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
@@ -24,7 +25,7 @@
 
   <div class="card destaque">
     <h2>Saldo</h2>
-    <p id="saldo"></p>
+    <p id="saldo">R$ 0</p>
   </div>
 
   <div class="card">
@@ -38,13 +39,13 @@
 
   <div class="card">
     <h3>Renda Fixa</h3>
-    <input id="fixa" type="number">
+    <input id="fixa" type="number" placeholder="Ex: 3000">
     <button onclick="salvarFixa()">Salvar</button>
   </div>
 
   <div class="card">
     <h3>Renda Variável</h3>
-    <input id="var" type="number">
+    <input id="var" type="number" placeholder="Ex: 200">
     <button onclick="addVar()">Adicionar</button>
   </div>
 
@@ -52,7 +53,7 @@
     <h3>Nova Despesa</h3>
 
     <input id="nome" placeholder="Ex: Aluguel">
-    <input id="valor" type="number">
+    <input id="valor" type="number" placeholder="Valor">
 
     <select id="caixa">
       <option>Essencial</option>
@@ -77,7 +78,7 @@
   </div>
 </section>
 
-<script src="script.js"></script>
+<script src="./script.js"></script>
 
 </body>
 </html>
