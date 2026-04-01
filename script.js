@@ -1,107 +1,88 @@
-* {
-  box-sizing: border-box;
+let fixa = Number(localStorage.getItem("fixa")) || 0;
+let variavel = JSON.parse(localStorage.getItem("var")) || [];
+let despesas = JSON.parse(localStorage.getItem("desp")) || [];
+
+function salvar() {
+  localStorage.setItem("fixa", fixa);
+  localStorage.setItem("var", JSON.stringify(variavel));
+  localStorage.setItem("desp", JSON.stringify(despesas));
 }
 
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #f4f4f4;
+function mostrar(sec) {
+  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+  document.getElementById(sec).classList.add("active");
 }
 
-header {
-  background: linear-gradient(90deg, #f4b400, #ffd54f);
-  padding: 15px;
-  font-size: 20px;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
+function salvarFixa() {
+  fixa = Number(document.getElementById("fixa").value);
+  salvar();
+  atualizar();
 }
 
-nav {
-  display: flex;
-  background: #000;
+function addVar() {
+  let v = Number(document.getElementById("var").value);
+  if (!v) return;
+
+  variavel.push(v);
+  salvar();
+  atualizar();
 }
 
-nav button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  background: #000;
-  color: white;
-  cursor: pointer;
+function addDespesa() {
+  let nome = document.getElementById("nome").value;
+  let valor = Number(document.getElementById("valor").value);
+  let caixa = document.getElementById("caixa").value;
+
+  if (!nome || !valor) return;
+
+  despesas.push({ nome, valor, caixa });
+  salvar();
+  atualizar();
 }
 
-nav button:hover {
-  background: #f4b400;
-  color: black;
+function atualizar() {
+  let totalVar = variavel.reduce((a,b)=>a+b,0);
+  let entradas = fixa + totalVar;
+
+  let totalDesp = despesas.reduce((a,b)=>a+b.valor,0);
+  let saldo = entradas - totalDesp;
+
+  document.getElementById("saldo").innerText = "R$ " + saldo.toFixed(2);
+  document.getElementById("resumo").innerText =
+    "Entradas: R$ " + entradas.toFixed(2) + " | Gastos: R$ " + totalDesp.toFixed(2);
+
+  document.getElementById("lista").innerHTML =
+    despesas.map(d =>
+      `<div>${d.nome} - R$${d.valor} <span class="tag">${d.caixa}</span></div>`
+    ).join("");
+
+  let caixinhas = {};
+  despesas.forEach(d => {
+    caixinhas[d.caixa] = (caixinhas[d.caixa] || 0) + d.valor;
+  });
+
+  document.getElementById("caixinhasView").innerHTML =
+    Object.entries(caixinhas).map(([k,v]) => {
+      let pct = entradas ? (v / entradas * 100) : 0;
+      return `
+        <div>
+          ${k} - ${pct.toFixed(0)}%
+          <div class="progress">
+            <div class="bar" style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  let essencial = caixinhas["Essencial"] || 0;
+  let pctEssencial = entradas ? (essencial / entradas * 100) : 0;
+
+  let alerta = "";
+  if (pctEssencial > 50) {
+    alerta = "⚠️ Você passou de 50% em essenciais!";
+  }
+
+  document.getElementById("alerta").innerText = alerta;
 }
 
-section {
-  display: none;
-  padding: 20px;
-}
-
-.active {
-  display: block;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.destaque {
-  background: #000;
-  color: #f4b400;
-}
-
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  width: 100%;
-  padding: 10px;
-  background: #f4b400;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-.tag {
-  background: #f4b400;
-  padding: 4px 8px;
-  border-radius: 5px;
-  margin-left: 5px;
-  font-size: 12px;
-}
-
-.progress {
-  height: 10px;
-  background: #eee;
-  border-radius: 5px;
-  margin-top: 5px;
-}
-
-.bar {
-  height: 10px;
-  background: #f4b400;
-  border-radius: 5px;
-}
-
-#alerta {
-  font-size: 12px;
-  color: red;
-}
+atualizar();
