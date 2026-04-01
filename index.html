@@ -2,98 +2,17 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Controle Financeiro</title>
+<title>Finance AI</title>
 
-<style>
-body {
-  font-family: Arial;
-  margin: 0;
-  background: #f7f7f7;
-}
-
-header {
-  background: #f4b400;
-  padding: 15px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-nav {
-  display: flex;
-  overflow-x: auto;
-  background: #000;
-}
-
-nav button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  background: #000;
-  color: #fff;
-  cursor: pointer;
-}
-
-nav button:hover {
-  background: #f4b400;
-  color: #000;
-}
-
-section {
-  display: none;
-  padding: 20px;
-}
-
-.active {
-  display: block;
-}
-
-.card {
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-}
-
-button {
-  background: #f4b400;
-  border: none;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.progress {
-  height: 10px;
-  background: #ddd;
-  border-radius: 5px;
-  margin-top: 5px;
-}
-
-.progress-bar {
-  height: 10px;
-  background: #f4b400;
-  border-radius: 5px;
-}
-
-.tag {
-  background: #f4b400;
-  padding: 3px 6px;
-  border-radius: 5px;
-  font-size: 12px;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>💰 Meu Financeiro</header>
+<header>
+  💰 Finance AI
+  <span id="alerta"></span>
+</header>
 
 <nav>
   <button onclick="mostrar('dashboard')">Dashboard</button>
@@ -101,10 +20,10 @@ button {
   <button onclick="mostrar('caixinhas')">Caixinhas</button>
 </nav>
 
-<!-- DASHBOARD -->
 <section id="dashboard" class="active">
-  <div class="card">
-    <h3>Saldo</h3>
+
+  <div class="card destaque">
+    <h2>Saldo</h2>
     <p id="saldo"></p>
   </div>
 
@@ -112,9 +31,9 @@ button {
     <h3>Resumo</h3>
     <p id="resumo"></p>
   </div>
+
 </section>
 
-<!-- FLUXO -->
 <section id="fluxo">
 
   <div class="card">
@@ -130,14 +49,17 @@ button {
   </div>
 
   <div class="card">
-    <h3>Despesas</h3>
+    <h3>Nova Despesa</h3>
 
-    <input id="nome" placeholder="Nome">
+    <input id="nome" placeholder="Ex: Aluguel">
     <input id="valor" type="number">
 
     <select id="caixa">
       <option>Essencial</option>
       <option>Investimento</option>
+      <option>Educação</option>
+      <option>Sonhos</option>
+      <option>Doação</option>
       <option>Lazer</option>
     </select>
 
@@ -148,91 +70,14 @@ button {
 
 </section>
 
-<!-- CAIXINHAS -->
 <section id="caixinhas">
   <div class="card">
-    <h3>Distribuição</h3>
+    <h3>Distribuição Inteligente</h3>
     <div id="caixinhasView"></div>
   </div>
 </section>
 
-<script>
-let rendaFixa = localStorage.getItem("fixa") || 0;
-let rendaVar = JSON.parse(localStorage.getItem("var")) || [];
-let despesas = JSON.parse(localStorage.getItem("desp")) || [];
-
-function salvarDados() {
-  localStorage.setItem("fixa", rendaFixa);
-  localStorage.setItem("var", JSON.stringify(rendaVar));
-  localStorage.setItem("desp", JSON.stringify(despesas));
-}
-
-function mostrar(sec){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.getElementById(sec).classList.add("active");
-}
-
-function salvarFixa(){
-  rendaFixa = Number(document.getElementById("fixa").value);
-  salvarDados();
-  atualizar();
-}
-
-function addVar(){
-  let v = Number(document.getElementById("var").value);
-  rendaVar.push(v);
-  salvarDados();
-  atualizar();
-}
-
-function addDespesa(){
-  let nome = document.getElementById("nome").value;
-  let valor = Number(document.getElementById("valor").value);
-  let caixa = document.getElementById("caixa").value;
-
-  despesas.push({nome, valor, caixa});
-  salvarDados();
-  atualizar();
-}
-
-function atualizar(){
-  let totalVar = rendaVar.reduce((a,b)=>a+b,0);
-  let entradas = Number(rendaFixa) + totalVar;
-
-  let totalDesp = despesas.reduce((a,b)=>a+b.valor,0);
-
-  let saldo = entradas - totalDesp;
-
-  document.getElementById("saldo").innerText = "R$ " + saldo;
-  document.getElementById("resumo").innerText =
-    "Entradas: R$ " + entradas + " | Gastos: R$ " + totalDesp;
-
-  document.getElementById("lista").innerHTML =
-    despesas.map(d => 
-      "<div>"+d.nome+" - R$"+d.valor+" <span class='tag'>"+d.caixa+"</span></div>"
-    ).join("");
-
-  let caixinhas = {};
-  despesas.forEach(d=>{
-    caixinhas[d.caixa] = (caixinhas[d.caixa]||0) + d.valor;
-  });
-
-  document.getElementById("caixinhasView").innerHTML =
-    Object.entries(caixinhas).map(([k,v])=>{
-      let pct = (v / entradas * 100 || 0).toFixed(0);
-      return `
-        <div>
-          ${k} - ${pct}%
-          <div class="progress">
-            <div class="progress-bar" style="width:${pct}%"></div>
-          </div>
-        </div>
-      `;
-    }).join("");
-}
-
-atualizar();
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
