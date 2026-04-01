@@ -8,29 +8,34 @@
 body {
   font-family: Arial;
   margin: 0;
-  background: #fff;
-  color: #000;
+  background: #f7f7f7;
 }
 
 header {
   background: #f4b400;
   padding: 15px;
+  font-size: 20px;
   font-weight: bold;
 }
 
 nav {
   display: flex;
-  gap: 10px;
-  padding: 10px;
-  border-bottom: 2px solid #000;
+  overflow-x: auto;
+  background: #000;
 }
 
 nav button {
-  padding: 10px;
+  flex: 1;
+  padding: 12px;
   border: none;
-  cursor: pointer;
   background: #000;
   color: #fff;
+  cursor: pointer;
+}
+
+nav button:hover {
+  background: #f4b400;
+  color: #000;
 }
 
 section {
@@ -42,44 +47,69 @@ section {
   display: block;
 }
 
-.box {
-  border: 2px solid #000;
+.card {
+  background: #fff;
   padding: 15px;
+  border-radius: 12px;
   margin-bottom: 15px;
-  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 input, select {
-  padding: 8px;
-  margin: 5px;
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
 }
 
 button {
   background: #f4b400;
   border: none;
   padding: 10px;
+  border-radius: 6px;
   cursor: pointer;
+}
+
+.progress {
+  height: 10px;
+  background: #ddd;
   border-radius: 5px;
+  margin-top: 5px;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #f4b400;
+  border-radius: 5px;
+}
+
+.tag {
+  background: #f4b400;
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 12px;
 }
 </style>
 </head>
 
 <body>
 
-<header>💰 Controle Financeiro</header>
+<header>💰 Meu Financeiro</header>
 
 <nav>
   <button onclick="mostrar('dashboard')">Dashboard</button>
   <button onclick="mostrar('fluxo')">Fluxo</button>
   <button onclick="mostrar('caixinhas')">Caixinhas</button>
-  <button onclick="mostrar('metas')">Metas</button>
-  <button onclick="mostrar('investimentos')">Investimentos</button>
 </nav>
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="active">
-  <div class="box">
-    <h2>📊 Resumo</h2>
+  <div class="card">
+    <h3>Saldo</h3>
+    <p id="saldo"></p>
+  </div>
+
+  <div class="card">
+    <h3>Resumo</h3>
     <p id="resumo"></p>
   </div>
 </section>
@@ -87,200 +117,121 @@ button {
 <!-- FLUXO -->
 <section id="fluxo">
 
-  <div class="box">
-    <h2>💰 Entradas</h2>
-
+  <div class="card">
     <h3>Renda Fixa</h3>
-    <input id="rendaFixa" type="number" placeholder="Quanto ganha no mês">
+    <input id="fixa" type="number">
     <button onclick="salvarFixa()">Salvar</button>
-
-    <h3>Renda Variável</h3>
-    <input id="rendaVar" type="number" placeholder="Valor recebido">
-    <button onclick="addVariavel()">Adicionar</button>
-
-    <p id="listaVar"></p>
   </div>
 
-  <div class="box">
-    <h2>💸 Despesas</h2>
+  <div class="card">
+    <h3>Renda Variável</h3>
+    <input id="var" type="number">
+    <button onclick="addVar()">Adicionar</button>
+  </div>
 
-    <input id="nomeDespesa" placeholder="Nome (ex: aluguel)">
-    <input id="valorDespesa" type="number" placeholder="Valor">
+  <div class="card">
+    <h3>Despesas</h3>
 
-    <select id="categoria">
-      <option>Moradia</option>
-      <option>Alimentação</option>
-      <option>Transporte</option>
-      <option>Lazer</option>
-    </select>
+    <input id="nome" placeholder="Nome">
+    <input id="valor" type="number">
 
-    <select id="caixinha">
+    <select id="caixa">
       <option>Essencial</option>
       <option>Investimento</option>
-      <option>Educação</option>
-      <option>Sonhos</option>
-      <option>Doação</option>
       <option>Lazer</option>
     </select>
 
     <button onclick="addDespesa()">Adicionar</button>
 
-    <p id="listaDespesas"></p>
-  </div>
-
-  <div class="box">
-    <h2>💳 Cartão de Crédito</h2>
-
-    <input id="cartao" type="number" placeholder="Valor no cartão">
-    <button onclick="addCartao()">Adicionar</button>
-
-    <p id="fatura"></p>
-    <button onclick="pagarFatura()">Pagar Fatura</button>
+    <div id="lista"></div>
   </div>
 
 </section>
 
 <!-- CAIXINHAS -->
 <section id="caixinhas">
-  <div class="box">
-    <h2>📦 Método das Caixinhas</h2>
-    <p id="caixinhasInfo"></p>
-  </div>
-</section>
-
-<!-- METAS -->
-<section id="metas">
-  <div class="box">
-    <h2>🚀 Metas</h2>
-
-    <input id="metaValor" type="number" placeholder="Valor da meta">
-    <input id="metaTempo" type="number" placeholder="Dias">
-
-    <button onclick="criarMeta()">Criar</button>
-
-    <p id="metaResultado"></p>
-  </div>
-</section>
-
-<!-- INVESTIMENTOS -->
-<section id="investimentos">
-  <div class="box">
-    <h2>📈 Investimentos</h2>
-
-    <input id="invest" type="number" placeholder="Valor investido">
-    <button onclick="addInvest()">Adicionar</button>
-
-    <p id="totalInvest"></p>
+  <div class="card">
+    <h3>Distribuição</h3>
+    <div id="caixinhasView"></div>
   </div>
 </section>
 
 <script>
-let rendaFixa = 0;
-let rendaVariavel = [];
-let despesas = [];
-let cartao = [];
-let investimentos = [];
+let rendaFixa = localStorage.getItem("fixa") || 0;
+let rendaVar = JSON.parse(localStorage.getItem("var")) || [];
+let despesas = JSON.parse(localStorage.getItem("desp")) || [];
 
-let caixinhas = {
-  Essencial: 0,
-  Investimento: 0,
-  Educação: 0,
-  Sonhos: 0,
-  Doação: 0,
-  Lazer: 0
-};
+function salvarDados() {
+  localStorage.setItem("fixa", rendaFixa);
+  localStorage.setItem("var", JSON.stringify(rendaVar));
+  localStorage.setItem("desp", JSON.stringify(despesas));
+}
 
-function mostrar(sec) {
-  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+function mostrar(sec){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(sec).classList.add("active");
 }
 
-function salvarFixa() {
-  rendaFixa = Number(document.getElementById("rendaFixa").value);
+function salvarFixa(){
+  rendaFixa = Number(document.getElementById("fixa").value);
+  salvarDados();
   atualizar();
 }
 
-function addVariavel() {
-  let v = Number(document.getElementById("rendaVar").value);
-  rendaVariavel.push(v);
-
-  document.getElementById("listaVar").innerText =
-    "Total variável: R$ " + rendaVariavel.reduce((a,b)=>a+b,0);
-
+function addVar(){
+  let v = Number(document.getElementById("var").value);
+  rendaVar.push(v);
+  salvarDados();
   atualizar();
 }
 
-function addDespesa() {
-  let nome = document.getElementById("nomeDespesa").value;
-  let valor = Number(document.getElementById("valorDespesa").value);
-  let caixinha = document.getElementById("caixinha").value;
+function addDespesa(){
+  let nome = document.getElementById("nome").value;
+  let valor = Number(document.getElementById("valor").value);
+  let caixa = document.getElementById("caixa").value;
 
-  despesas.push({nome, valor, caixinha});
-  caixinhas[caixinha] += valor;
-
-  document.getElementById("listaDespesas").innerText =
-    despesas.map(d => d.nome + " - R$ " + d.valor + " (" + d.caixinha + ")").join("\n");
-
+  despesas.push({nome, valor, caixa});
+  salvarDados();
   atualizar();
 }
 
-function addCartao() {
-  let v = Number(document.getElementById("cartao").value);
-  cartao.push(v);
-  atualizar();
-}
+function atualizar(){
+  let totalVar = rendaVar.reduce((a,b)=>a+b,0);
+  let entradas = Number(rendaFixa) + totalVar;
 
-function pagarFatura() {
-  let total = cartao.reduce((a,b)=>a+b,0);
-  despesas.push({nome:"Fatura Cartão", valor:total, caixinha:"Essencial"});
-  caixinhas["Essencial"] += total;
-  cartao = [];
-  atualizar();
-}
+  let totalDesp = despesas.reduce((a,b)=>a+b.valor,0);
 
-function addInvest() {
-  let v = Number(document.getElementById("invest").value);
-  investimentos.push(v);
-  atualizar();
-}
+  let saldo = entradas - totalDesp;
 
-function criarMeta() {
-  let valor = Number(document.getElementById("metaValor").value);
-  let dias = Number(document.getElementById("metaTempo").value);
-
-  let porDia = valor / dias;
-
-  document.getElementById("metaResultado").innerText =
-    "Guardar R$ " + porDia.toFixed(2) + " por dia";
-}
-
-function atualizar() {
-  let totalVar = rendaVariavel.reduce((a,b)=>a+b,0);
-  let totalEntradas = rendaFixa + totalVar;
-
-  let totalDespesas = despesas.reduce((a,b)=>a+b.valor,0);
-  let totalCartao = cartao.reduce((a,b)=>a+b,0);
-
-  let saldo = totalEntradas - totalDespesas - totalCartao;
-
+  document.getElementById("saldo").innerText = "R$ " + saldo;
   document.getElementById("resumo").innerText =
-    "Entradas: R$ " + totalEntradas +
-    " | Despesas: R$ " + totalDespesas +
-    " | Cartão: R$ " + totalCartao +
-    " | Saldo: R$ " + saldo;
+    "Entradas: R$ " + entradas + " | Gastos: R$ " + totalDesp;
 
-  document.getElementById("fatura").innerText =
-    "Fatura atual: R$ " + totalCartao;
+  document.getElementById("lista").innerHTML =
+    despesas.map(d => 
+      "<div>"+d.nome+" - R$"+d.valor+" <span class='tag'>"+d.caixa+"</span></div>"
+    ).join("");
 
-  let investTotal = investimentos.reduce((a,b)=>a+b,0);
-  document.getElementById("totalInvest").innerText =
-    "Total investido: R$ " + investTotal;
+  let caixinhas = {};
+  despesas.forEach(d=>{
+    caixinhas[d.caixa] = (caixinhas[d.caixa]||0) + d.valor;
+  });
 
-  document.getElementById("caixinhasInfo").innerText =
-    Object.entries(caixinhas)
-      .map(([k,v]) => k + ": R$ " + v)
-      .join(" | ");
+  document.getElementById("caixinhasView").innerHTML =
+    Object.entries(caixinhas).map(([k,v])=>{
+      let pct = (v / entradas * 100 || 0).toFixed(0);
+      return `
+        <div>
+          ${k} - ${pct}%
+          <div class="progress">
+            <div class="progress-bar" style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join("");
 }
+
+atualizar();
 </script>
 
 </body>
