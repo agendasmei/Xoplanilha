@@ -1,7 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial;
-  background: #f9fafb;
+  background: #f4f4f4;
 }
 
 header {
@@ -15,14 +19,14 @@ header {
 
 nav {
   display: flex;
-  background: #111;
+  background: #000;
 }
 
 nav button {
   flex: 1;
   padding: 12px;
   border: none;
-  background: #111;
+  background: #000;
   color: white;
   cursor: pointer;
 }
@@ -44,9 +48,9 @@ section {
 .card {
   background: white;
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 12px;
   margin-bottom: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .destaque {
@@ -58,6 +62,8 @@ input, select {
   width: 100%;
   padding: 10px;
   margin: 5px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 button {
@@ -65,8 +71,13 @@ button {
   padding: 10px;
   background: #f4b400;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  opacity: 0.9;
 }
 
 .tag {
