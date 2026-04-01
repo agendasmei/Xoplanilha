@@ -3,78 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Finance AI</title>
+<title>MeuDinheiro</title>
 
 <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
-<header>
-  💰 Finance AI
-  <span id="alerta"></span>
+<header class="topo">
+  <div class="logo">💰</div>
+  <h2>MeuDinheiro</h2>
 </header>
 
-<nav>
-  <button onclick="mostrar('dashboard')">Dashboard</button>
-  <button onclick="mostrar('fluxo')">Fluxo</button>
-  <button onclick="mostrar('caixinhas')">Caixinhas</button>
-</nav>
-
+<!-- DASHBOARD -->
 <section id="dashboard" class="active">
-  <div class="card destaque">
-    <h2>Saldo</h2>
-    <p id="saldo">R$ 0</p>
+
+<h2>Abril 2026</h2>
+
+<div class="grid">
+
+  <div class="card verde">
+    <p>Renda Total</p>
+    <h3 id="rendaTotal">R$ 0</h3>
+  </div>
+
+  <div class="card vermelho">
+    <p>Gastos</p>
+    <h3 id="gastos">R$ 0</h3>
   </div>
 
   <div class="card">
-    <h3>Resumo</h3>
-    <p id="resumo"></p>
-  </div>
-</section>
-
-<section id="fluxo">
-
-  <div class="card">
-    <h3>Renda Fixa</h3>
-    <input id="fixa" type="number" placeholder="Ex: 3000">
-    <button onclick="salvarFixa()">Salvar</button>
+    <p>Fixos</p>
+    <h3 id="fixos">R$ 0</h3>
   </div>
 
-  <div class="card">
-    <h3>Renda Variável</h3>
-    <input id="var" type="number" placeholder="Ex: 200">
-    <button onclick="addVar()">Adicionar</button>
+  <div class="card verde">
+    <p>Sobra</p>
+    <h3 id="sobra">R$ 0</h3>
   </div>
 
-  <div class="card">
-    <h3>Nova Despesa</h3>
+</div>
 
-    <input id="nome" placeholder="Ex: Aluguel">
-    <input id="valor" type="number" placeholder="Valor">
+<div class="card">
+  <h3>💰 Renda Mensal</h3>
 
-    <select id="caixa">
-      <option>Essencial</option>
-      <option>Investimento</option>
-      <option>Educação</option>
-      <option>Sonhos</option>
-      <option>Doação</option>
-      <option>Lazer</option>
-    </select>
+  <label>Salário</label>
+  <input id="fixa" type="number">
 
-    <button onclick="addDespesa()">Adicionar</button>
+  <label>Renda Extra</label>
+  <input id="extra" type="number">
 
-    <div id="lista"></div>
-  </div>
+  <button onclick="salvarRenda()">Salvar</button>
+</div>
 
 </section>
 
-<section id="caixinhas">
-  <div class="card">
-    <h3>Distribuição Inteligente</h3>
-    <div id="caixinhasView"></div>
-  </div>
+<!-- DESPESAS -->
+<section id="despesas">
+
+<div class="card">
+  <h3>💸 Nova Despesa</h3>
+
+  <input id="nome" placeholder="Ex: Aluguel">
+  <input id="valor" type="number">
+
+  <select id="tipo">
+    <option>Fixo</option>
+    <option>Variável</option>
+  </select>
+
+  <select id="caixa">
+    <option>Essencial</option>
+    <option>Lazer</option>
+    <option>Investimento</option>
+  </select>
+
+  <button onclick="addDespesa()">Adicionar</button>
+</div>
+
+<div class="card" id="lista"></div>
+
 </section>
+
+<!-- MENU -->
+<nav class="menu">
+  <button onclick="trocar('dashboard')">🏠</button>
+  <button onclick="trocar('despesas')">💳</button>
+</nav>
 
 <script src="./script.js"></script>
 
