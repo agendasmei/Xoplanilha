@@ -1,1 +1,86 @@
+let fixa = localStorage.getItem("fixa") || 0;
+let variavel = JSON.parse(localStorage.getItem("var")) || [];
+let despesas = JSON.parse(localStorage.getItem("desp")) || [];
 
+function salvar() {
+  localStorage.setItem("fixa", fixa);
+  localStorage.setItem("var", JSON.stringify(variavel));
+  localStorage.setItem("desp", JSON.stringify(despesas));
+}
+
+function mostrar(sec) {
+  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+  document.getElementById(sec).classList.add("active");
+}
+
+function salvarFixa() {
+  fixa = Number(document.getElementById("fixa").value);
+  salvar();
+  atualizar();
+}
+
+function addVar() {
+  let v = Number(document.getElementById("var").value);
+  variavel.push(v);
+  salvar();
+  atualizar();
+}
+
+function addDespesa() {
+  let nome = document.getElementById("nome").value;
+  let valor = Number(document.getElementById("valor").value);
+  let caixa = document.getElementById("caixa").value;
+
+  despesas.push({ nome, valor, caixa });
+  salvar();
+  atualizar();
+}
+
+function atualizar() {
+  let totalVar = variavel.reduce((a,b)=>a+b,0);
+  let entradas = Number(fixa) + totalVar;
+
+  let totalDesp = despesas.reduce((a,b)=>a+b.valor,0);
+  let saldo = entradas - totalDesp;
+
+  document.getElementById("saldo").innerText = "R$ " + saldo;
+  document.getElementById("resumo").innerText =
+    "Entradas: R$ " + entradas + " | Gastos: R$ " + totalDesp;
+
+  document.getElementById("lista").innerHTML =
+    despesas.map(d =>
+      `<div>${d.nome} - R$${d.valor} <span class="tag">${d.caixa}</span></div>`
+    ).join("");
+
+  let caixinhas = {};
+  despesas.forEach(d => {
+    caixinhas[d.caixa] = (caixinhas[d.caixa] || 0) + d.valor;
+  });
+
+  document.getElementById("caixinhasView").innerHTML =
+    Object.entries(caixinhas).map(([k,v]) => {
+      let pct = (v / entradas * 100 || 0).toFixed(0);
+      return `
+        <div>
+          ${k} - ${pct}%
+          <div class="progress">
+            <div class="bar" style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  // ⚠️ ALERTA INTELIGENTE (tipo IA)
+  let essencial = caixinhas["Essencial"] || 0;
+  let pctEssencial = (essencial / entradas * 100 || 0);
+
+  let alerta = "";
+
+  if (pctEssencial > 50) {
+    alerta = "⚠️ Você passou de 50% em essenciais!";
+  }
+
+  document.getElementById("alerta").innerText = alerta;
+}
+
+atualizar();
