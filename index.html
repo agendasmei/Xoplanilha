@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle Financeiro</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #ffffff;
+      color: #000;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #f4b400;
+    }
+
+    .box {
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      padding: 8px;
+      margin-right: 10px;
+    }
+
+    button {
+      background: #f4b400;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>💰 Controle Financeiro</h1>
+
+<div class="box">
+  <h2>Renda Mensal</h2>
+  <input id="renda" type="number" placeholder="Digite sua renda">
+  <button onclick="salvarRenda()">Salvar</button>
+</div>
+
+<div class="box">
+  <h2>Adicionar Despesa</h2>
+  <input id="despesa" type="number" placeholder="Digite uma despesa">
+  <button onclick="addDespesa()">Adicionar</button>
+</div>
+
+<div class="box">
+  <h2>Resumo</h2>
+  <p id="resultado">Nenhum dado ainda</p>
+</div>
+
+<script>
+let renda = 0;
+let despesas = [];
+
+function salvarRenda() {
+  renda = Number(document.getElementById("renda").value);
+  atualizar();
+}
+
+function addDespesa() {
+  let valor = Number(document.getElementById("despesa").value);
+  despesas.push(valor);
+  atualizar();
+}
+
+function atualizar() {
+  let totalDespesas = despesas.reduce((a, b) => a + b, 0);
+  let saldo = renda - totalDespesas;
+
+  document.getElementById("resultado").innerText =
+    "Renda: R$ " + renda +
+    " | Despesas: R$ " + totalDespesas +
+    " | Sobra: R$ " + saldo;
+}
+</script>
+
+</body>
+</html>
