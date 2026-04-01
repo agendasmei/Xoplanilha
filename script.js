@@ -1,88 +1,41 @@
-let fixa = Number(localStorage.getItem("fixa")) || 0;
-let variavel = JSON.parse(localStorage.getItem("var")) || [];
-let despesas = JSON.parse(localStorage.getItem("desp")) || [];
+let fixa = 0;
+let extra = 0;
+let despesas = [];
 
-function salvar() {
-  localStorage.setItem("fixa", fixa);
-  localStorage.setItem("var", JSON.stringify(variavel));
-  localStorage.setItem("desp", JSON.stringify(despesas));
-}
-
-function mostrar(sec) {
-  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-  document.getElementById(sec).classList.add("active");
-}
-
-function salvarFixa() {
+function salvarRenda() {
   fixa = Number(document.getElementById("fixa").value);
-  salvar();
-  atualizar();
-}
-
-function addVar() {
-  let v = Number(document.getElementById("var").value);
-  if (!v) return;
-
-  variavel.push(v);
-  salvar();
+  extra = Number(document.getElementById("extra").value);
   atualizar();
 }
 
 function addDespesa() {
   let nome = document.getElementById("nome").value;
   let valor = Number(document.getElementById("valor").value);
-  let caixa = document.getElementById("caixa").value;
+  let tipo = document.getElementById("tipo").value;
 
-  if (!nome || !valor) return;
-
-  despesas.push({ nome, valor, caixa });
-  salvar();
+  despesas.push({nome, valor, tipo});
   atualizar();
 }
 
 function atualizar() {
-  let totalVar = variavel.reduce((a,b)=>a+b,0);
-  let entradas = fixa + totalVar;
+  let rendaTotal = fixa + extra;
+  let gastos = despesas.reduce((a,b)=>a+b.valor,0);
+  let fixos = despesas
+    .filter(d => d.tipo === "Fixo")
+    .reduce((a,b)=>a+b.valor,0);
 
-  let totalDesp = despesas.reduce((a,b)=>a+b.valor,0);
-  let saldo = entradas - totalDesp;
+  let sobra = rendaTotal - gastos;
 
-  document.getElementById("saldo").innerText = "R$ " + saldo.toFixed(2);
-  document.getElementById("resumo").innerText =
-    "Entradas: R$ " + entradas.toFixed(2) + " | Gastos: R$ " + totalDesp.toFixed(2);
+  document.getElementById("rendaTotal").innerText = "R$ " + rendaTotal;
+  document.getElementById("gastos").innerText = "R$ " + gastos;
+  document.getElementById("fixos").innerText = "R$ " + fixos;
+  document.getElementById("sobra").innerText = "R$ " + sobra;
 
   document.getElementById("lista").innerHTML =
-    despesas.map(d =>
-      `<div>${d.nome} - R$${d.valor} <span class="tag">${d.caixa}</span></div>`
-    ).join("");
-
-  let caixinhas = {};
-  despesas.forEach(d => {
-    caixinhas[d.caixa] = (caixinhas[d.caixa] || 0) + d.valor;
-  });
-
-  document.getElementById("caixinhasView").innerHTML =
-    Object.entries(caixinhas).map(([k,v]) => {
-      let pct = entradas ? (v / entradas * 100) : 0;
-      return `
-        <div>
-          ${k} - ${pct.toFixed(0)}%
-          <div class="progress">
-            <div class="bar" style="width:${pct}%"></div>
-          </div>
-        </div>
-      `;
-    }).join("");
-
-  let essencial = caixinhas["Essencial"] || 0;
-  let pctEssencial = entradas ? (essencial / entradas * 100) : 0;
-
-  let alerta = "";
-  if (pctEssencial > 50) {
-    alerta = "⚠️ Você passou de 50% em essenciais!";
-  }
-
-  document.getElementById("alerta").innerText = alerta;
+    despesas.map(d => `${d.nome} - R$${d.valor}`).join("<br>");
 }
 
-atualizar();
+function trocar(sec) {
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(sec).classList.add("active");
+}
